@@ -1,0 +1,226 @@
+<div class="apidocDiv">
+<style>
+/*csslint
+*/
+.apidocDiv {
+    background: #fff;
+    font-family: Arial, Helvetica, sans-serif;
+}
+.apidocDiv a[href] {
+    color: #33f;
+    font-weight: bold;
+    text-decoration: none;
+}
+.apidocDiv a[href]:hover {
+    text-decoration: underline;
+}
+.apidocCodeCommentSpan {
+    background: #bbf;
+    color: #000;
+    display: block;
+}
+.apidocCodeKeywordSpan {
+    color: #d00;
+    font-weight: bold;
+}
+.apidocCodePre {
+    background: #eef;
+    border: 1px solid;
+    color: #777;
+    padding: 5px;
+    white-space: pre-wrap;
+}
+.apidocFooterDiv {
+    margin-top: 20px;
+    text-align: center;
+}
+.apidocModuleLi {
+    margin-top: 10px;
+}
+.apidocSectionDiv {
+    border-top: 1px solid;
+    margin-top: 20px;
+}
+.apidocSignatureSpan {
+    color: #777;
+    font-weight: bold;
+}
+</style>
+<h1>api documentation for
+    <a
+
+    >express-cors (v0.0.3)</a>
+</h1>
+<h4>CORS middleware for expressjs</h4>
+<div class="apidocSectionDiv"><a
+    href="#apidoc.tableOfContents"
+    id="apidoc.tableOfContents"
+><h1>table of contents</h1></a><ol>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.express-cors">module express-cors</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.express-cors.express-cors">
+            function <span class="apidocSignatureSpan"></span>express-cors
+            <span class="apidocSignatureSpan">(options)</span>
+            </a>
+
+        </li>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.express-cors.toString">
+            function <span class="apidocSignatureSpan">express-cors.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+    <li class="apidocModuleLi"><a href="#apidoc.module.express-cors.toString">module express-cors.toString</a><ol>
+
+        <li>
+
+            <a class="apidocElementLiA" href="#apidoc.element.express-cors.toString.toString">
+            function <span class="apidocSignatureSpan">express-cors.</span>toString
+            <span class="apidocSignatureSpan">()</span>
+            </a>
+
+        </li>
+
+    </ol></li>
+
+</ol></div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.express-cors" id="apidoc.module.express-cors">module express-cors</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.express-cors.express-cors" id="apidoc.element.express-cors.express-cors">
+        function <span class="apidocSignatureSpan"></span>express-cors
+        <span class="apidocSignatureSpan">(options)</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">express-cors = function (options) {
+
+  options = options || {}
+  options.allowedOrigins = options.allowedOrigins || []
+  if (!options.hasOwnProperty(&#x27;allowCredentials&#x27;)) {
+    options.allowCredentials = true
+  }
+  options.methods = options.methods || [&#x27;GET&#x27;, &#x27;POST&#x27;, &#x27;PUT&#x27;, &#x27;DELETE&#x27;, &#x27;PATCH&#x27;, &#x27;OPTIONS&#x27;]
+  options.headers = options.headers || [&#x27;X-Requested-With&#x27;, &#x27;Content-Type&#x27;]
+
+  // Parse allowed origins list and turn them all into regexps
+  var allowedOrigins = options.allowedOrigins.map(function(origin){
+    // check if allowed origin starts with http:// or https://
+    // of not, then we should allow both
+    var anyHttp = !origin.match(/^https?:\/\//)
+    // random hash tokens to escape wildcard sequences like &#x22;*.&#x22; and &#x22;:*&#x22;
+    var rand = &#x27;WnqkQwirtbRoerjaSnei20ssbqQi&#x27;,
+        rand1 = rand + &#x27;1&#x27;,
+        rand2 = rand + &#x27;2&#x27;
+    // hide wildcard sequences
+    origin = origin.replace(/\*\./g, rand1)
+    origin = origin.replace(/:\*/g, rand2)
+    // escape wildcard regexp characters in origin value
+    origin = escapeRegExp(origin)
+    // return wildcard sequences back, turning them into reg expressions
+    origin = origin.replace(new RegExp(rand1, &#x27;g&#x27;), &#x27;(.*\\.)?&#x27;)
+    origin = origin.replace(new RegExp(rand2, &#x27;g&#x27;), &#x27;(:\\d+)?&#x27;)
+    // append http/https expression if we allow both
+    if (anyHttp) {
+      origin = &#x27;^https?:\/\/&#x27; + origin + &#x27;$&#x27;
+    }
+    else {
+      origin = &#x27;^&#x27; + origin + &#x27;$&#x27;
+    }
+
+    return new RegExp(origin)
+  })
+
+  // express middleware
+  return function(req, res, next){
+    var origin = req.get(&#x27;Origin&#x27;), i, matched = false
+
+    // match against all prepared regexp origins
+    for (i = 0; i &#x3c; allowedOrigins.length; i++) {
+      if (allowedOrigins[i].test(origin)) {
+        matched = true
+        break
+      }
+    }
+
+    if (!matched) return next()
+
+    res.set(&#x27;Access-Control-Allow-Origin&#x27;, origin)
+
+    if (options.methods.length) {
+      res.set(&#x27;Access-Control-Allow-Methods&#x27;, options.methods.join(&#x27;, &#x27;))
+    }
+
+    if (options.headers.length) {
+      res.set(&#x27;Access-Control-Allow-Headers&#x27;, options.headers.join(&#x27;, &#x27;))
+    }
+
+    if (options.maxAge) {
+      res.set(&#x27;Access-Control-Max-Age&#x27;, options.maxAge)
+    }
+
+    if (options.allowCredentials) {
+      res.set(&#x27;Access-Control-Allow-Credentials&#x27;, &#x27;true&#x27;)
+    }
+
+    if (&#x27;OPTIONS&#x27; == req.method) return res.send(200)
+    next()
+  }
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+
+    <h2>
+        <a href="#apidoc.element.express-cors.toString" id="apidoc.element.express-cors.toString">
+        function <span class="apidocSignatureSpan">express-cors.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">toString = function () {
+    return text;
+}</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocSectionDiv">
+<h1><a href="#apidoc.module.express-cors.toString" id="apidoc.module.express-cors.toString">module express-cors.toString</a></h1>
+
+
+    <h2>
+        <a href="#apidoc.element.express-cors.toString.toString" id="apidoc.element.express-cors.toString.toString">
+        function <span class="apidocSignatureSpan">express-cors.</span>toString
+        <span class="apidocSignatureSpan">()</span>
+        </a>
+    </h2>
+    <ul>
+    <li>description and source-code<pre class="apidocCodePre">function toString() { [native code] }</pre></li>
+    <li>example usage<pre class="apidocCodePre">n/a</pre></li>
+    </ul>
+
+
+</div>
+
+<div class="apidocFooterDiv">
+    [ this document was created with
+    <a href="https://github.com/kaizhu256/node-utility2" target="_blank">utility2</a>
+    ]
+</div>
+</div>
