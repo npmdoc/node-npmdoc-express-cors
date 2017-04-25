@@ -1,4 +1,7 @@
-# api documentation for  express-cors (v0.0.3)  [![npm package](https://img.shields.io/npm/v/npmdoc-express-cors.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-express-cors) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-express-cors.svg)](https://travis-ci.org/npmdoc/node-npmdoc-express-cors)
+# npmdoc-express-cors
+
+#### basic api documentation for  express-cors (v0.0.3)  [![npm package](https://img.shields.io/npm/v/npmdoc-express-cors.svg?style=flat-square)](https://www.npmjs.org/package/npmdoc-express-cors) [![travis-ci.org build-status](https://api.travis-ci.org/npmdoc/node-npmdoc-express-cors.svg)](https://travis-ci.org/npmdoc/node-npmdoc-express-cors)
+
 #### CORS middleware for expressjs
 
 [![NPM](https://nodei.co/npm/express-cors.png?downloads=true&downloadRank=true&stars=true)](https://www.npmjs.com/package/express-cors)
@@ -42,7 +45,8 @@
     "optionalDependencies": {},
     "readmeFilename": "README.md",
     "url": "http://github.com/0ctave/express-cors",
-    "version": "0.0.3"
+    "version": "0.0.3",
+    "bin": {}
 }
 ```
 
